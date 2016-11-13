@@ -1,19 +1,21 @@
 const { app } = require('electron')
+
+const Datastore = require('nedb')
+const Promise = require('bluebird')
+Promise.promisifyAll(Datastore.prototype)
+
+const trackScanner = require('./track_scanner')
+
 // Module to control application life.
 const auth = require('./auth')
-
-let spotify = require('./spotify')
-
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  auth.auth().then((accessToken) =>  {
-    spotify = spotify(accessToken)
-		spotify.loadUserTracks().then(tracks => {
-			console.log(tracks)
-		})
-  })
+  auth.auth().then((accessToken) => {
+		console.log('Got access token', accessToken)
+    return trackScanner.scanTracks(accessToken)
+  }).catch(console.error)
 })
 
 // Quit when all windows are closed.

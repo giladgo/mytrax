@@ -39,6 +39,7 @@ module.exports = function(accessToken) {
 				while (true) {
 					let currentResult = yield self.userTrackPage(page++)
 					items = items.concat(currentResult.items)
+					console.log(`Loaded ${items.length} tracks...`)
 					if (!currentResult.next) {
 						break
 					}
